@@ -21,6 +21,13 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Ko Phyo — Sign in",
   description: "Personal workspace login",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: "/apple-icon",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
