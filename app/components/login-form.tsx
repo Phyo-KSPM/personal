@@ -1,51 +1,41 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useActionState, useEffect, useState } from "react";
+import { signIn } from "@/app/actions/auth";
+import { SIGNED_IN_RESULT } from "@/lib/auth-result";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
+  const [error, formAction, pending] = useActionState(signIn, null);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
+  useEffect(() => {
+    if (error === SIGNED_IN_RESULT) {
+      window.location.replace("/home");
     }
+  }, [error]);
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
-
-    setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setLoading(false);
-    setSuccess(true);
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const form = event.currentTarget;
+    setShowPassword(false);
+    requestAnimationFrame(() => {
+      const password = form.elements.namedItem("password");
+      if (password instanceof HTMLInputElement) {
+        password.value = "";
+      }
+    });
   }
 
-  if (success) {
-    return (
-      <div className="login-rise rounded-2xl border border-gold/30 bg-sand/70 px-6 py-8 text-center">
-        <p className="font-serif text-3xl text-wine">Ko Phyo</p>
-        <p className="mt-3 text-sm leading-7 text-muted">
-          You are signed in.
-          <br />
-          Welcome to your personal workspace.
-        </p>
-      </div>
-    );
-  }
+  const visibleError =
+    error && error !== SIGNED_IN_RESULT ? error : null;
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+    <form
+      action={formAction}
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-5"
+      noValidate
+      autoComplete="off"
+    >
       <div className="flex flex-col gap-2">
         <label htmlFor="email" className="text-sm text-wine">
           Email
@@ -54,9 +44,8 @@ export default function LoginForm() {
           id="email"
           name="email"
           type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          autoComplete="username"
+          required
           placeholder="you@email.com"
           className="h-12 rounded-xl border border-wine/12 bg-white px-4 text-[15px] text-wine outline-none transition placeholder:text-muted/50 focus:border-copper/60 focus:ring-4 focus:ring-gold/20"
         />
@@ -72,8 +61,8 @@ export default function LoginForm() {
             name="password"
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            required
+            minLength={6}
             placeholder="••••••••"
             className="h-12 w-full rounded-xl border border-wine/12 bg-white px-4 pr-12 text-[15px] text-wine outline-none transition placeholder:text-muted/50 focus:border-copper/60 focus:ring-4 focus:ring-gold/20"
           />
@@ -91,25 +80,25 @@ export default function LoginForm() {
       <label className="flex items-center gap-2.5 text-sm text-muted">
         <input
           type="checkbox"
-          checked={remember}
-          onChange={(event) => setRemember(event.target.checked)}
+          name="remember"
+          defaultChecked
           className="size-4 rounded border-wine/20 accent-wine"
         />
         <span>Remember me</span>
       </label>
 
-      {error ? (
+      {visibleError ? (
         <p className="rounded-xl bg-[#f4e4e0] px-3 py-2.5 text-sm text-[#8a3b32]">
-          {error}
+          {visibleError}
         </p>
       ) : null}
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={pending || error === SIGNED_IN_RESULT}
         className="mt-1 h-12 rounded-xl bg-wine text-[15px] font-medium tracking-wide text-ivory transition hover:bg-wine-soft disabled:cursor-wait disabled:opacity-70"
       >
-        {loading ? "Checking..." : "Sign in"}
+        {pending || error === SIGNED_IN_RESULT ? "Checking..." : "Sign in"}
       </button>
     </form>
   );

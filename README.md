@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ko Phyo
 
-## Getting Started
+Personal workspace with a private login and notes, using Next.js and Supabase.
 
-First, run the development server:
+## Local setup
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase (single-user)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a project at [supabase.com](https://supabase.com).
+2. Copy **Project URL** and **anon / publishable key** into `.env.local`:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+3. **Authentication → Providers → Email**: enable Email. Turn off **Confirm email** and **Allow new users to sign up**.
+4. **Authentication → Users → Add user**: create your email and password.
+5. **Authentication → URL Configuration**:
+   - Site URL: `http://localhost:3000`
+   - Redirect URLs: `http://localhost:3000/**`
+6. **SQL Editor**: paste and run `supabase/schema.sql` whenever the notes table changes.
 
-## Learn More
+After that, sign in on `/`. Notes live on `/home`, grouped in the sidebar:
 
-To learn more about Next.js, take a look at the following resources:
+- Network
+- System
+- DevOps
+- Software
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Upload a `.md` file into the matching topic, or write one in the editor.
