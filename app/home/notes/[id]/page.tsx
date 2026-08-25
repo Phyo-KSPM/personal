@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { deleteNote } from "@/app/actions/notes";
 import MarkdownBody from "@/app/components/markdown-body";
+import PendingButton from "@/app/components/pending-button";
 import { parseTopic, topicLabel } from "@/lib/notes";
 import { createClient } from "@/lib/supabase/server";
 
@@ -44,9 +45,11 @@ export default async function NotePage({
           </a>
           <form action={deleteNote}>
             <input type="hidden" name="id" value={note.id} />
-            <button type="submit" className="text-sm text-muted transition hover:text-wine">
-              Delete
-            </button>
+            <PendingButton
+              idle="Delete"
+              busy="Deleting"
+              className="text-sm text-muted transition hover:text-wine disabled:cursor-wait disabled:opacity-70"
+            />
           </form>
         </div>
       </div>

@@ -52,6 +52,26 @@ body {
   animation: login-rise 0.7s ease-out both;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .login-rise {
+    animation: none;
+  }
+
+  .animate-spin {
+    animation: none;
+  }
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  transition-property: color, background-color, border-color, box-shadow, opacity;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .note-markdown {
   color: var(--wine);
   font-size: 15px;

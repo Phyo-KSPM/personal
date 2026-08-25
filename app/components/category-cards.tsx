@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "motion/react";
 import { TOPICS, topicPath, type TopicSlug } from "@/lib/notes";
 
 export default function CategoryCards({
@@ -8,18 +11,25 @@ export default function CategoryCards({
 }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {TOPICS.map((topic) => (
-        <Link
+      {TOPICS.map((topic, index) => (
+        <motion.div
           key={topic.slug}
-          href={topicPath(topic.slug)}
-          className="rounded-2xl border border-wine/10 bg-white p-6 transition hover:border-wine/20"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+          whileHover={{ y: -4 }}
         >
-          <h3 className="font-serif text-2xl text-wine">{topic.label}</h3>
-          <p className="mt-2 text-sm leading-6 text-muted">{topic.hint}</p>
-          <p className="mt-5 text-xs tracking-wide text-muted uppercase">
-            {counts[topic.slug] ?? 0} notes
-          </p>
-        </Link>
+          <Link
+            href={topicPath(topic.slug)}
+            className="block rounded-2xl border border-wine/10 bg-white p-6 transition hover:border-wine/20 hover:shadow-[0_16px_36px_-20px_rgba(42,22,24,0.4)]"
+          >
+            <h3 className="font-serif text-2xl text-wine">{topic.label}</h3>
+            <p className="mt-2 text-sm leading-6 text-muted">{topic.hint}</p>
+            <p className="mt-5 text-xs tracking-wide text-muted uppercase">
+              {counts[topic.slug] ?? 0} notes
+            </p>
+          </Link>
+        </motion.div>
       ))}
     </div>
   );

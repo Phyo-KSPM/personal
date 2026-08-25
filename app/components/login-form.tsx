@@ -1,7 +1,10 @@
 "use client";
 
 import { FormEvent, useActionState, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { signIn } from "@/app/actions/auth";
+import PendingOverlay from "@/app/components/pending-overlay";
+import Spinner from "@/app/components/spinner";
 import { SIGNED_IN_RESULT } from "@/lib/auth-result";
 
 export default function LoginForm() {
@@ -32,11 +35,19 @@ export default function LoginForm() {
     <form
       action={formAction}
       onSubmit={handleSubmit}
-      className="flex flex-col gap-5"
+      className="relative flex flex-col gap-5 overflow-hidden"
       noValidate
       autoComplete="off"
     >
-      <div className="flex flex-col gap-2">
+      <PendingOverlay
+        label="Signing in"
+        active={pending || error === SIGNED_IN_RESULT}
+      />
+      <fieldset
+        disabled={pending || error === SIGNED_IN_RESULT}
+        className="flex flex-col gap-5 border-0 p-0 disabled:opacity-100"
+      >
+        <div className="flex flex-col gap-2">
         <label htmlFor="email" className="text-sm text-wine">
           Email
         </label>
@@ -87,19 +98,35 @@ export default function LoginForm() {
         <span>Remember me</span>
       </label>
 
-      {visibleError ? (
-        <p className="rounded-xl bg-[#f4e4e0] px-3 py-2.5 text-sm text-[#8a3b32]">
-          {visibleError}
-        </p>
-      ) : null}
+      <AnimatePresence>
+        {visibleError ? (
+          <motion.p
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            className="rounded-xl bg-[#f4e4e0] px-3 py-2.5 text-sm text-[#8a3b32]"
+          >
+            {visibleError}
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
 
-      <button
-        type="submit"
-        disabled={pending || error === SIGNED_IN_RESULT}
-        className="mt-1 h-12 rounded-xl bg-wine text-[15px] font-medium tracking-wide text-ivory transition hover:bg-wine-soft disabled:cursor-wait disabled:opacity-70"
-      >
-        {pending || error === SIGNED_IN_RESULT ? "Checking..." : "Sign in"}
-      </button>
+        <motion.button
+          type="submit"
+          whileTap={pending ? undefined : { scale: 0.98 }}
+          disabled={pending || error === SIGNED_IN_RESULT}
+          className="mt-1 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-wine text-[15px] font-medium tracking-wide text-ivory transition hover:bg-wine-soft disabled:cursor-wait disabled:opacity-70"
+        >
+          {pending || error === SIGNED_IN_RESULT ? (
+            <>
+              <Spinner className="size-4 text-ivory" />
+              Signing in…
+            </>
+          ) : (
+            "Sign in"
+          )}
+        </motion.button>
+      </fieldset>
     </form>
   );
 }

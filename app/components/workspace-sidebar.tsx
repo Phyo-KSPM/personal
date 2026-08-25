@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   isTopicSlug,
   parseTopic,
@@ -55,7 +56,7 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
       <Link
         href={topicNewPath(activeTopic ?? "software")}
         onClick={() => setOpen(false)}
-        className="mt-2 flex h-10 items-center rounded-lg px-3 text-sm text-gold hover:bg-ivory/8"
+        className="mt-2 flex h-10 items-center rounded-lg px-3 text-sm text-gold transition hover:bg-ivory/8"
       >
         Add
       </Link>
@@ -66,19 +67,31 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
     <>
       <div className="flex items-center justify-between bg-wine px-4 py-3 text-ivory lg:hidden">
         <p className="font-serif text-lg">Ko Phyo</p>
-        <button
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          className="text-sm text-ivory/70"
-        >
-          {open ? "Close" : "Menu"}
-        </button>
-      </div>
-      {open ? (
-        <div className="flex max-h-[75vh] flex-col bg-wine px-3 py-3 text-ivory lg:hidden">
-          {nav}
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setOpen((value) => !value)}
+            className="text-sm text-ivory/70 transition hover:text-ivory"
+          >
+            {open ? "Close" : "Menu"}
+          </motion.button>
         </div>
-      ) : null}
+        <AnimatePresence initial={false}>
+          {open ? (
+            <motion.div
+              key="mobile-nav"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden lg:hidden"
+            >
+              <div className="flex max-h-[75vh] flex-col bg-wine px-3 py-3 text-ivory">
+                {nav}
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
 
       <aside className="relative sticky top-0 hidden h-dvh w-64 shrink-0 flex-col overflow-hidden bg-wine text-ivory lg:flex">
         <div className="login-grain pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay" />
@@ -111,7 +124,7 @@ function NavRow({
     <Link
       href={href}
       onClick={onNavigate}
-      className={`flex h-10 items-center gap-2 rounded-md px-3 text-sm ${
+      className={`flex h-10 items-center gap-2 rounded-md px-3 text-sm transition ${
         active
           ? "bg-ivory/12 text-ivory"
           : "text-ivory/65 hover:bg-ivory/8 hover:text-ivory"
