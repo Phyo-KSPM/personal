@@ -3,7 +3,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ViewToggle, type NotesView } from "@/app/components/notes-collection";
-import PageBack from "@/app/components/workspace-back";
 import { topicLabel, type TopicSlug } from "@/lib/notes";
 
 export default function AddNote({
@@ -31,7 +30,6 @@ export default function AddNote({
 
   return (
     <div className="flex flex-col gap-8">
-      <PageBack href="/home" />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="font-serif text-3xl text-wine">{topicLabel(topic)}</h2>

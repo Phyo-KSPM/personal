@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { BackChevron } from "@/app/components/workspace-back";
 import {
   isTopicSlug,
   parseTopic,
   TOPICS,
   topicNewPath,
   topicPath,
+  workspaceBackHref,
   type NoteSummary,
   type TopicSlug,
 } from "@/lib/notes";
@@ -31,6 +33,8 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
   } else if (topicFromPath && isTopicSlug(topicFromPath)) {
     activeTopic = topicFromPath;
   }
+
+  const backHref = workspaceBackHref(pathname, notes);
 
   const nav = (
     <nav className="flex min-h-0 flex-1 flex-col">
@@ -73,8 +77,20 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
 
   return (
     <>
-      <div className="flex items-center justify-between bg-wine px-4 py-3 text-ivory lg:hidden">
-        <p className="font-serif text-lg">Ko Phyo</p>
+      <div className="sticky top-0 z-40 lg:hidden">
+        <div className="flex items-center justify-between bg-wine px-4 py-3 text-ivory">
+          {backHref ? (
+            <Link
+              href={backHref}
+              onClick={() => setOpen(false)}
+              className="inline-flex h-9 items-center gap-1.5 text-sm text-ivory/80 hover:text-ivory"
+            >
+              <BackChevron />
+              Back
+            </Link>
+          ) : (
+            <p className="font-serif text-lg">Ko Phyo</p>
+          )}
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
@@ -91,7 +107,7 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden lg:hidden"
+              className="overflow-hidden"
             >
               <div className="flex max-h-[75vh] flex-col bg-wine px-3 py-3 text-ivory">
                 {nav}
@@ -99,6 +115,7 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
             </motion.div>
           ) : null}
         </AnimatePresence>
+      </div>
 
       <aside className="relative sticky top-0 hidden h-dvh w-64 shrink-0 flex-col overflow-hidden bg-wine text-ivory lg:flex">
         <div className="login-grain pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay" />

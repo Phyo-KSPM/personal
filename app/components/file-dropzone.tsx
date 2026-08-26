@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useDropzone } from "react-dropzone";
-import { motion } from "motion/react";
+import { isNoteFile } from "@/lib/note-file-types";
 
 export default function FileDropzone() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,9 +24,20 @@ export default function FileDropzone() {
 
   const { getRootProps, isDragActive } = useDropzone({
     onDrop: (files) => assignFile(files[0]),
+    onDropRejected: (rejections) => {
+      const file = rejections[0]?.file;
+      if (file && isNoteFile(file)) {
+        assignFile(file);
+      }
+    },
     accept: {
       "text/markdown": [".md"],
       "text/plain": [".txt"],
+      "application/pdf": [".pdf"],
+      "application/msword": [".doc"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+        ".docx",
+      ],
     },
     multiple: false,
     noClick: true,
@@ -61,7 +72,7 @@ export default function FileDropzone() {
           id="file"
           name="file"
           type="file"
-          accept=".md,.txt,text/markdown,text/plain"
+          accept=".md,.txt,.pdf,.doc,.docx,text/markdown,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           required
           disabled={pending}
           className="sr-only"
@@ -70,7 +81,7 @@ export default function FileDropzone() {
         <p className="text-sm text-wine">
           {pending
             ? "Uploading…"
-            : fileName || "Drop a .md or .txt file, or click to choose"}
+            : fileName || "Drop a Markdown, text, PDF, or Word file, or click to choose"}
         </p>
       </motion.div>
     </div>

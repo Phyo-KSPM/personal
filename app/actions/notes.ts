@@ -9,9 +9,8 @@ import {
   titleFromMarkdown,
   topicPath,
 } from "@/lib/notes";
+import { contentFromUpload, NOTE_FILE_MAX_BYTES } from "@/lib/note-files";
 import { createClient } from "@/lib/supabase/server";
-
-const MAX_MARKDOWN_BYTES = 512 * 1024;
 
 async function requireUser() {
   const supabase = await createClient();
@@ -69,20 +68,26 @@ export async function uploadMarkdown(formData: FormData) {
   const file = formData.get("file");
   const category = parseTopic(formData.get("category"));
   if (!(file instanceof File) || file.size === 0) {
-    failSave(category, "Choose a .md or .txt file.");
+    failSave(category, "Choose a Markdown, text, PDF, or Word file.");
   }
 
   if (!isNoteFile(file)) {
-    failSave(category, "Only .md and .txt files can be uploaded.");
+    failSave(category, "Upload a .md, .txt, .pdf, .doc, or .docx file.");
   }
 
-  if (file.size > MAX_MARKDOWN_BYTES) {
-    failSave(category, "That file is too large. Keep it under 512 KB.");
+  if (file.size > NOTE_FILE_MAX_BYTES) {
+    failSave(category, "That file is too large. Keep it under 8 MB.");
   }
 
-  const content = (await file.text()).trim();
+  let content = "";
+  try {
+    content = await contentFromUpload(file);
+  } catch {
+    failSave(category, "Could not read that file. Try another format or export it again.");
+  }
+
   if (!content) {
-    failSave(category, "That file is empty.");
+    failSave(category, "No text was found in that file.");
   }
 
   await insertNote(titleFromMarkdown(file.name, content), content, category);

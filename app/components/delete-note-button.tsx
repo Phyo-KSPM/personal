@@ -27,7 +27,23 @@ export default function DeleteNoteButton({
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className}>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={
+          className ??
+          "inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-xl border border-wine/25 bg-white px-3.5 text-sm font-medium text-wine transition hover:border-[#8a3b32]/35 hover:bg-[#f4e4e0] hover:text-[#8a3b32]"
+        }
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M5 7.5h14M10 7.5V5.8c0-.4.3-.8.8-.8h2.4c.5 0 .8.4.8.8v1.7M9.2 11v6M12 11v6M14.8 11v6M7 7.5l.7 11.2c.1.8.7 1.3 1.5 1.3h5.6c.8 0 1.4-.5 1.5-1.3L17 7.5"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
         Delete
       </button>
       <ConfirmDeleteDialog

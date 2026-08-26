@@ -2,9 +2,8 @@ import { notFound } from "next/navigation";
 import FadeIn from "@/app/components/fade-in";
 import MarkdownBody from "@/app/components/markdown-body";
 import NoteActions from "@/app/components/note-actions";
-import PageBack from "@/app/components/workspace-back";
 import { getNoteById } from "@/lib/data/notes";
-import { parseTopic, topicLabel, topicPath } from "@/lib/notes";
+import { parseTopic, topicLabel } from "@/lib/notes";
 import { readSupabaseEnv } from "@/lib/supabase/env";
 import type { Metadata } from "next";
 
@@ -38,7 +37,6 @@ export default async function NotePage({
 
   return (
     <FadeIn as="main" className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8 sm:px-10">
-      <PageBack href={topicPath(category)} />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-[11px] tracking-[0.16em] text-muted uppercase">
@@ -48,7 +46,7 @@ export default async function NotePage({
             {new Date(note.updated_at || note.created_at).toLocaleString()}
           </p>
         </div>
-        <NoteActions id={note.id} title={note.title} content={note.content} />
+        <NoteActions id={note.id} title={note.title} />
       </div>
 
       <article className="rounded-2xl border border-wine/8 bg-white px-5 py-6 sm:px-8 sm:py-8">

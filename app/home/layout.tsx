@@ -45,6 +45,6 @@ async function SidebarFromDb() {
 }
 
 async function HeaderFromDb() {
-  const user = await getAuthUser();
-  return <WorkspaceHeader email={user?.email} />;
+  const [user, { notes }] = await Promise.all([getAuthUser(), listNoteSummaries()]);
+  return <WorkspaceHeader email={user?.email} notes={notes} />;
 }

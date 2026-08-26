@@ -61,6 +61,20 @@ export function topicNewPath(slug: TopicSlug) {
   return `${topicPath(slug)}?add=1`;
 }
 
+export function workspaceBackHref(pathname: string, notes: NoteSummary[]) {
+  if (pathname === "/home") {
+    return null;
+  }
+
+  if (pathname.startsWith("/home/notes/")) {
+    const id = pathname.slice("/home/notes/".length).split("/")[0];
+    const note = notes.find((item) => item.id === id);
+    return note ? topicPath(note.category) : "/home";
+  }
+
+  return "/home";
+}
+
 export function isNotesSchemaError(message?: string | null) {
   return Boolean(
     message &&
@@ -77,14 +91,12 @@ export function titleFromMarkdown(filename: string, content: string) {
   }
 
   const fromName = filename
-    .replace(/\.(md|txt)$/i, "")
+    .replace(/\.(md|txt|pdf|docx?)$/i, "")
     .replace(/[-_]+/g, " ")
     .trim();
 
   return fromName || "Untitled note";
 }
 
-export function isNoteFile(file: File) {
-  const name = file.name.toLowerCase();
-  return name.endsWith(".md") || name.endsWith(".txt");
-}
+export { isNoteFile } from "@/lib/note-file-types";
+

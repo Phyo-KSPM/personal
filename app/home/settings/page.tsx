@@ -1,7 +1,6 @@
 import ChangePasswordForm from "@/app/components/change-password-form";
 import FadeIn from "@/app/components/fade-in";
 import IdleLockSetting from "@/app/components/idle-lock-setting";
-import PageBack from "@/app/components/workspace-back";
 import { getAuthUser } from "@/lib/data/notes";
 import { readSupabaseEnv } from "@/lib/supabase/env";
 import type { Metadata } from "next";
@@ -18,7 +17,6 @@ export default async function SettingsPage() {
       as="main"
       className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8 sm:px-10"
     >
-      <PageBack href="/home" />
       <div>
         <h2 className="font-serif text-3xl text-wine">Settings</h2>
         <p className="mt-2 text-sm text-muted">Account and workspace preferences.</p>

@@ -53,7 +53,7 @@ export default function NotesCollection({
                   <DeleteNoteButton
                     id={note.id}
                     title={note.title}
-                    className="text-muted hover:text-wine"
+                    className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-wine/25 bg-ivory px-2.5 text-xs font-medium text-wine transition hover:border-[#8a3b32]/35 hover:bg-[#f4e4e0] hover:text-[#8a3b32]"
                   />
                 </td>
               </tr>
@@ -85,7 +85,7 @@ export default function NotesCollection({
             <DeleteNoteButton
               id={note.id}
               title={note.title}
-              className="text-sm text-muted hover:text-wine"
+              className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border border-wine/25 bg-ivory px-3 text-sm font-medium text-wine transition hover:border-[#8a3b32]/35 hover:bg-[#f4e4e0] hover:text-[#8a3b32]"
             />
           </div>
         </motion.article>

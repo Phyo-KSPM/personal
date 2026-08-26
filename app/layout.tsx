@@ -27,10 +27,11 @@ export const metadata: Metadata = {
   description: "Personal workspace",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32" },
-      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
     ],
-    apple: "/apple-icon",
+    apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
   },
 };
 
