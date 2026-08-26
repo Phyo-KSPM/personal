@@ -33,9 +33,9 @@ export default function NotesCollection({
   if (view === "table") {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.18, ease }}
         className="overflow-x-auto rounded-2xl border border-wine/10 bg-white"
       >
         <table className="w-full min-w-[32rem] text-left text-sm">
@@ -77,30 +77,30 @@ export default function NotesCollection({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {notes.map((note, index) => (
-        <NoteCard key={note.id} note={note} index={index} />
+      {notes.map((note) => (
+        <NoteCard key={note.id} note={note} />
       ))}
     </div>
   );
 }
 
-function NoteCard({ note, index }: { note: Note; index: number }) {
+function NoteCard({ note }: { note: Note }) {
   return (
     <form action={deleteNote}>
       <input type="hidden" name="id" value={note.id} />
-      <PendingNoteCard note={note} index={index} />
+      <PendingNoteCard note={note} />
     </form>
   );
 }
 
-function PendingNoteCard({ note, index }: { note: Note; index: number }) {
+function PendingNoteCard({ note }: { note: Note }) {
   const { pending } = useFormStatus();
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: pending ? 0.55 : 1, y: 0 }}
-      transition={{ duration: 0.35, delay: pending ? 0 : index * 0.05, ease }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: pending ? 0.55 : 1 }}
+      transition={{ duration: 0.18, ease }}
       whileHover={pending ? undefined : { y: -3 }}
       className={`flex flex-col rounded-2xl border border-wine/10 bg-white p-5 transition-shadow ${
         pending
@@ -130,24 +130,24 @@ function PendingNoteCard({ note, index }: { note: Note; index: number }) {
 
 export function ViewToggle({
   view,
-  hrefCards,
-  hrefTable,
+  onChange,
 }: {
   view: NotesView;
-  hrefCards: string;
-  hrefTable: string;
+  onChange: (view: NotesView) => void;
 }) {
   const items = [
-    { href: hrefCards, id: "cards" as const, label: "Cards" },
-    { href: hrefTable, id: "table" as const, label: "Table" },
+    { id: "cards" as const, label: "Cards" },
+    { id: "table" as const, label: "Table" },
   ];
 
   return (
     <div className="flex rounded-full border border-wine/12 p-1 text-sm">
       {items.map((item) => (
-        <Link
+        <button
           key={item.id}
-          href={item.href}
+          type="button"
+          onClick={() => onChange(item.id)}
+          aria-pressed={view === item.id}
           className={`relative rounded-full px-3 py-1.5 transition ${
             view === item.id ? "text-ivory" : "text-muted hover:text-wine"
           }`}
@@ -156,11 +156,11 @@ export function ViewToggle({
             <motion.span
               layoutId="notes-view-pill"
               className="absolute inset-0 rounded-full bg-wine"
-              transition={{ type: "spring", stiffness: 420, damping: 32 }}
+              transition={{ type: "spring", stiffness: 380, damping: 34 }}
             />
           ) : null}
           <span className="relative z-10">{item.label}</span>
-        </Link>
+        </button>
       ))}
     </div>
   );

@@ -1,9 +1,9 @@
-import AddNote from "@/app/components/add-note";
 import MarkdownUpload from "@/app/components/markdown-upload";
-import NotesCollection, { type NotesView } from "@/app/components/notes-collection";
-import { isNotesSchemaError, type Note, type TopicSlug } from "@/lib/notes";
+import NotesBoard from "@/app/components/notes-board";
+import { type Note, type TopicSlug } from "@/lib/notes";
 import { readSupabaseEnv } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import type { NotesView } from "@/app/components/notes-collection";
 
 export default async function NotesWorkspace({
   topic,
@@ -36,35 +36,19 @@ export default async function NotesWorkspace({
     .order("created_at", { ascending: false });
 
   const notes = (data ?? []) as Note[];
-  const tableMissing =
-    isNotesSchemaError(error?.message) || isNotesSchemaError(saveError);
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-6 py-8 sm:px-10">
-      <AddNote
+      <NotesBoard
         topic={topic}
-        view={view}
-        saveError={tableMissing ? undefined : saveError}
-        startOpen={startAdd}
+        initialView={view}
+        notes={notes}
+        saveError={saveError}
+        startAdd={startAdd}
+        queryError={error?.message}
       >
         <MarkdownUpload defaultTopic={topic} />
-      </AddNote>
-
-      {tableMissing ? (
-        <p className="rounded-2xl border border-gold/30 bg-sand/70 px-4 py-3 text-sm leading-6 text-muted">
-          The notes table is missing. In Supabase, open SQL Editor, paste{" "}
-          <code className="font-mono text-wine">supabase/schema.sql</code>, then
-          click Run. After it succeeds, refresh this page.
-        </p>
-      ) : null}
-
-      {error && !tableMissing ? (
-        <p className="rounded-xl bg-[#f4e4e0] px-3 py-2.5 text-sm text-[#8a3b32]">
-          {error.message}
-        </p>
-      ) : null}
-
-      {!tableMissing ? <NotesCollection notes={notes} view={view} /> : null}
+      </NotesBoard>
     </main>
   );
 }

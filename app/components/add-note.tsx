@@ -3,23 +3,24 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ViewToggle, type NotesView } from "@/app/components/notes-collection";
-import { topicLabel, topicPath, type TopicSlug } from "@/lib/notes";
+import { topicLabel, type TopicSlug } from "@/lib/notes";
 
 export default function AddNote({
   topic,
   view,
+  onViewChange,
   saveError,
   startOpen = false,
   children,
 }: {
   topic: TopicSlug;
   view: NotesView;
+  onViewChange: (view: NotesView) => void;
   saveError?: string;
   startOpen?: boolean;
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(startOpen || Boolean(saveError));
-  const base = topicPath(topic);
 
   useEffect(() => {
     if (startOpen || saveError) {
@@ -35,7 +36,7 @@ export default function AddNote({
           <p className="mt-2 text-sm text-muted">Notes in this section only.</p>
         </div>
         <div className="relative z-10 flex flex-wrap items-center gap-3">
-          <ViewToggle view={view} hrefCards={base} hrefTable={`${base}?view=table`} />
+          <ViewToggle view={view} onChange={onViewChange} />
           <motion.button
             type="button"
             whileTap={{ scale: 0.97 }}
