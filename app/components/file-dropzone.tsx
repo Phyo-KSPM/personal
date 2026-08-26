@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useDropzone } from "react-dropzone";
+import { motion } from "motion/react";
 import { isNoteFile } from "@/lib/note-file-types";
 
 export default function FileDropzone() {
