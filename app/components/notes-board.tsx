@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import AddNote from "@/app/components/add-note";
 import NotesCollection, { type NotesView } from "@/app/components/notes-collection";
-import { isNotesSchemaError, type Note, type TopicSlug } from "@/lib/notes";
+import { isNotesSchemaError, type NoteSummary, type TopicSlug } from "@/lib/notes";
 
 function writeViewToUrl(view: NotesView) {
   const url = new URL(window.location.href);
@@ -26,7 +26,7 @@ export default function NotesBoard({
 }: {
   topic: TopicSlug;
   initialView: NotesView;
-  notes: Note[];
+  notes: NoteSummary[];
   saveError?: string;
   startAdd?: boolean;
   queryError?: string;

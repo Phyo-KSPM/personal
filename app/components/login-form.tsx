@@ -113,9 +113,9 @@ export default function LoginForm() {
 
         <motion.button
           type="submit"
-          whileTap={pending ? undefined : { scale: 0.98 }}
+          whileHover={{ y: -1 }}
           disabled={pending || error === SIGNED_IN_RESULT}
-          className="mt-1 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-wine text-[15px] font-medium tracking-wide text-ivory transition hover:bg-wine-soft disabled:cursor-wait disabled:opacity-70"
+          className="mt-1 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-wine text-[15px] font-medium tracking-wide text-ivory hover:bg-wine-soft disabled:cursor-wait disabled:opacity-70"
         >
           {pending || error === SIGNED_IN_RESULT ? (
             <>

@@ -1,6 +1,18 @@
 import { notFound } from "next/navigation";
 import NotesWorkspace from "@/app/components/notes-workspace";
-import { isTopicSlug } from "@/lib/notes";
+import { isTopicSlug, topicLabel } from "@/lib/notes";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/home/c/[topic]">): Promise<Metadata> {
+  const { topic } = await params;
+  if (!isTopicSlug(topic)) {
+    return { title: "Notes" };
+  }
+
+  return { title: topicLabel(topic) };
+}
 
 export default async function TopicPage({
   params,

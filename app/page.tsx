@@ -1,4 +1,10 @@
+import FadeIn from "@/app/components/fade-in";
 import LoginForm from "@/app/components/login-form";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+};
 
 export default function Home() {
   return (
@@ -11,7 +17,7 @@ export default function Home() {
 
         <p className="relative font-serif text-xl tracking-[0.28em] text-gold">KP</p>
 
-        <div className="relative login-rise max-w-sm">
+        <FadeIn className="relative max-w-sm">
           <p className="text-sm tracking-wide text-gold/90">Private space</p>
           <h1 className="mt-4 font-serif text-6xl leading-[1.05] text-ivory">
             Ko Phyo
@@ -19,7 +25,7 @@ export default function Home() {
           <p className="mt-6 text-base leading-8 text-ivory/70">
             Welcome back. Sign in to your personal workspace.
           </p>
-        </div>
+        </FadeIn>
 
         <p className="relative text-xs tracking-[0.22em] text-ivory/35 uppercase">
           Personal workspace
@@ -27,7 +33,7 @@ export default function Home() {
       </aside>
 
       <main className="flex flex-1 items-center justify-center bg-ivory px-6 py-16 sm:px-10">
-        <div className="w-full max-w-[400px] login-rise" style={{ animationDelay: "80ms" }}>
+        <FadeIn className="w-full max-w-[400px]" delay={0.08}>
           <div className="mb-10 lg:hidden">
             <p className="font-serif text-lg tracking-[0.28em] text-gold">KP</p>
             <h1 className="mt-3 font-serif text-4xl text-wine">Ko Phyo</h1>
@@ -44,7 +50,7 @@ export default function Home() {
           <div className="mt-8">
             <LoginForm />
           </div>
-        </div>
+        </FadeIn>
       </main>
     </div>
   );

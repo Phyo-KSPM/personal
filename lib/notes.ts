@@ -36,6 +36,7 @@ export type NoteSummary = {
   id: string;
   title: string;
   category: TopicSlug;
+  created_at?: string;
   updated_at: string;
 };
 
@@ -86,17 +87,4 @@ export function titleFromMarkdown(filename: string, content: string) {
 export function isNoteFile(file: File) {
   const name = file.name.toLowerCase();
   return name.endsWith(".md") || name.endsWith(".txt");
-}
-
-export function excerptFromMarkdown(content: string) {
-  const line = content
-    .split("\n")
-    .map((part) => part.replace(/^#+\s*/, "").trim())
-    .find((part) => part.length > 0);
-
-  if (!line) {
-    return "Empty note";
-  }
-
-  return line.length > 140 ? `${line.slice(0, 137)}…` : line;
 }

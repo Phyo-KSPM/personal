@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { easeOut } from "@/lib/motion";
 import { TOPICS, topicPath, type TopicSlug } from "@/lib/notes";
 
 export default function CategoryCards({
@@ -14,14 +15,14 @@ export default function CategoryCards({
       {TOPICS.map((topic, index) => (
         <motion.div
           key={topic.slug}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.35, delay: index * 0.05, ease: easeOut }}
           whileHover={{ y: -4 }}
         >
           <Link
             href={topicPath(topic.slug)}
-            className="block rounded-2xl border border-wine/10 bg-white p-6 transition hover:border-wine/20 hover:shadow-[0_16px_36px_-20px_rgba(42,22,24,0.4)]"
+            className="block rounded-2xl border border-wine/10 bg-white p-6 hover:border-wine/20 hover:shadow-[0_16px_36px_-20px_rgba(42,22,24,0.4)]"
           >
             <h3 className="font-serif text-2xl text-wine">{topic.label}</h3>
             <p className="mt-2 text-sm leading-6 text-muted">{topic.hint}</p>

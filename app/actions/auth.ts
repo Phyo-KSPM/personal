@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { SIGNED_IN_RESULT } from "@/lib/auth-result";
+import { PASSWORD_UPDATED, SIGNED_IN_RESULT } from "@/lib/auth-result";
 import { createClient } from "@/lib/supabase/server";
 
 export async function signIn(
@@ -49,4 +49,59 @@ export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+export async function changePassword(
+  _previousState: string | null,
+  formData: FormData,
+) {
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const newPassword = String(formData.get("newPassword") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+  if (currentPassword.length < 6 || newPassword.length < 6) {
+    return "Password must be at least 6 characters.";
+  }
+
+  if (newPassword !== confirmPassword) {
+    return "New passwords do not match.";
+  }
+
+  if (newPassword === currentPassword) {
+    return "Choose a password that is different from the current one.";
+  }
+
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch (cause) {
+    return cause instanceof Error
+      ? cause.message
+      : "Supabase is not configured. Add keys to .env.local.";
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user?.email) {
+    return "You are not signed in.";
+  }
+
+  const { error: currentError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: currentPassword,
+  });
+
+  if (currentError) {
+    return "Current password is wrong.";
+  }
+
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+  if (error) {
+    return error.message;
+  }
+
+  return PASSWORD_UPDATED;
 }

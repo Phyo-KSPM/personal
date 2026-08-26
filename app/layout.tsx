@@ -20,8 +20,11 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Ko Phyo — Sign in",
-  description: "Personal workspace login",
+  title: {
+    default: "Ko Phyo",
+    template: "%s — Ko Phyo",
+  },
+  description: "Personal workspace",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "32x32" },

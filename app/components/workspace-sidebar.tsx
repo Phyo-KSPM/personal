@@ -53,13 +53,21 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
           />
         ))}
       </div>
-      <Link
-        href={topicNewPath(activeTopic ?? "software")}
-        onClick={() => setOpen(false)}
-        className="mt-2 flex h-10 items-center rounded-lg px-3 text-sm text-gold transition hover:bg-ivory/8"
-      >
-        Add
-      </Link>
+      <div className="mt-2 flex flex-col">
+        <Link
+          href={topicNewPath(activeTopic ?? "software")}
+          onClick={() => setOpen(false)}
+          className="flex h-10 items-center rounded-lg px-3 text-sm text-gold hover:bg-ivory/8"
+        >
+          Add
+        </Link>
+        <NavRow
+          href="/home/settings"
+          label="Settings"
+          active={pathname === "/home/settings"}
+          onNavigate={() => setOpen(false)}
+        />
+      </div>
     </nav>
   );
 
@@ -67,14 +75,13 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
     <>
       <div className="flex items-center justify-between bg-wine px-4 py-3 text-ivory lg:hidden">
         <p className="font-serif text-lg">Ko Phyo</p>
-          <motion.button
+          <button
             type="button"
-            whileTap={{ scale: 0.97 }}
             onClick={() => setOpen((value) => !value)}
-            className="text-sm text-ivory/70 transition hover:text-ivory"
+            className="text-sm text-ivory/70 hover:text-ivory"
           >
             {open ? "Close" : "Menu"}
-          </motion.button>
+          </button>
         </div>
         <AnimatePresence initial={false}>
           {open ? (
@@ -83,7 +90,7 @@ export default function WorkspaceSidebar({ notes }: { notes: NoteSummary[] }) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
               className="overflow-hidden lg:hidden"
             >
               <div className="flex max-h-[75vh] flex-col bg-wine px-3 py-3 text-ivory">
@@ -124,15 +131,20 @@ function NavRow({
     <Link
       href={href}
       onClick={onNavigate}
-      className={`flex h-10 items-center gap-2 rounded-md px-3 text-sm transition ${
-        active
-          ? "bg-ivory/12 text-ivory"
-          : "text-ivory/65 hover:bg-ivory/8 hover:text-ivory"
+      className={`relative flex h-10 items-center gap-2 rounded-md px-3 text-sm ${
+        active ? "text-ivory" : "text-ivory/65 hover:bg-ivory/8 hover:text-ivory"
       }`}
     >
-      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {active ? (
+        <motion.span
+          layoutId="sidebar-active"
+          className="absolute inset-0 rounded-md bg-ivory/12"
+          transition={{ type: "spring", stiffness: 400, damping: 34 }}
+        />
+      ) : null}
+      <span className="relative min-w-0 flex-1 truncate">{label}</span>
       {typeof count === "number" ? (
-        <span className="text-[11px] tabular-nums text-ivory/35">{count}</span>
+        <span className="relative text-[11px] tabular-nums text-ivory/35">{count}</span>
       ) : null}
     </Link>
   );

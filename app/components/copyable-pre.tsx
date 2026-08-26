@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
-import { motion } from "motion/react";
 
 async function writeClipboard(text: string, pre: HTMLPreElement) {
   if (navigator.clipboard?.writeText && window.isSecureContext) {
@@ -71,14 +70,13 @@ export default function CopyablePre({
 
   return (
     <div className="relative">
-      <motion.button
+      <button
         type="button"
-        whileTap={{ scale: 0.96 }}
         onClick={() => void copy()}
-        className="absolute top-2 right-2 z-10 rounded-lg bg-ivory/12 px-2.5 py-1 text-xs text-ivory transition hover:bg-ivory/20"
+        className="absolute top-2 right-2 z-10 rounded-lg bg-ivory/12 px-2.5 py-1 text-xs text-ivory hover:bg-ivory/20"
       >
         {status === "copied" ? "Copied" : status === "failed" ? "Copy failed" : "Copy"}
-      </motion.button>
+      </button>
       <pre
         {...props}
         ref={preRef}

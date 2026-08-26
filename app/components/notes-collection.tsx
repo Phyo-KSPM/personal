@@ -1,33 +1,22 @@
 "use client";
 
-import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { deleteNote } from "@/app/actions/notes";
-import PendingButton from "@/app/components/pending-button";
-import { excerptFromMarkdown, type Note } from "@/lib/notes";
+import DeleteNoteButton from "@/app/components/delete-note-button";
+import { easeOut, springSoft } from "@/lib/motion";
+import { type NoteSummary } from "@/lib/notes";
 
 export type NotesView = "cards" | "table";
-
-const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function NotesCollection({
   notes,
   view,
 }: {
-  notes: Note[];
+  notes: NoteSummary[];
   view: NotesView;
 }) {
   if (notes.length === 0) {
-    return (
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="text-sm text-muted"
-      >
-        No notes in this section yet.
-      </motion.p>
-    );
+    return <p className="text-sm text-muted">No notes in this section yet.</p>;
   }
 
   if (view === "table") {
@@ -35,7 +24,7 @@ export default function NotesCollection({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.18, ease }}
+        transition={{ duration: 0.2, ease: easeOut }}
         className="overflow-x-auto rounded-2xl border border-wine/10 bg-white"
       >
         <table className="w-full min-w-[32rem] text-left text-sm">
@@ -48,24 +37,24 @@ export default function NotesCollection({
           </thead>
           <tbody>
             {notes.map((note) => (
-              <tr key={note.id} className="border-b border-wine/6 last:border-0">
+              <tr
+                key={note.id}
+                className="border-b border-wine/6 last:border-0 hover:bg-sand/50"
+              >
                 <td className="px-4 py-3">
-                  <Link href={`/home/notes/${note.id}`} className="text-wine transition hover:underline">
+                  <Link href={`/home/notes/${note.id}`} className="text-wine hover:underline">
                     {note.title}
                   </Link>
                 </td>
                 <td className="px-4 py-3 text-muted">
-                  {new Date(note.updated_at || note.created_at).toLocaleString()}
+                  {new Date(note.updated_at || note.created_at || "").toLocaleString()}
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <form action={deleteNote} className="inline">
-                    <input type="hidden" name="id" value={note.id} />
-                    <PendingButton
-                      idle="Delete"
-                      busy="Deleting"
-                      className="text-muted transition hover:text-wine disabled:cursor-wait disabled:opacity-70"
-                    />
-                  </form>
+                  <DeleteNoteButton
+                    id={note.id}
+                    title={note.title}
+                    className="text-muted hover:text-wine"
+                  />
                 </td>
               </tr>
             ))}
@@ -77,54 +66,31 @@ export default function NotesCollection({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {notes.map((note) => (
-        <NoteCard key={note.id} note={note} />
+      {notes.map((note, index) => (
+        <motion.article
+          key={note.id}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.04, ease: easeOut }}
+          whileHover={{ y: -3 }}
+          className="flex flex-col rounded-2xl border border-wine/10 bg-white p-5 hover:shadow-[0_12px_30px_-18px_rgba(42,22,24,0.35)]"
+        >
+          <Link href={`/home/notes/${note.id}`} className="min-w-0 flex-1">
+            <h3 className="font-medium text-wine">{note.title}</h3>
+            <p className="mt-4 text-xs text-muted">
+              {new Date(note.updated_at || note.created_at || "").toLocaleString()}
+            </p>
+          </Link>
+          <div className="mt-4">
+            <DeleteNoteButton
+              id={note.id}
+              title={note.title}
+              className="text-sm text-muted hover:text-wine"
+            />
+          </div>
+        </motion.article>
       ))}
     </div>
-  );
-}
-
-function NoteCard({ note }: { note: Note }) {
-  return (
-    <form action={deleteNote}>
-      <input type="hidden" name="id" value={note.id} />
-      <PendingNoteCard note={note} />
-    </form>
-  );
-}
-
-function PendingNoteCard({ note }: { note: Note }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <motion.article
-      initial={{ opacity: 0 }}
-      animate={{ opacity: pending ? 0.55 : 1 }}
-      transition={{ duration: 0.18, ease }}
-      whileHover={pending ? undefined : { y: -3 }}
-      className={`flex flex-col rounded-2xl border border-wine/10 bg-white p-5 transition-shadow ${
-        pending
-          ? "pointer-events-none"
-          : "hover:shadow-[0_12px_30px_-18px_rgba(42,22,24,0.35)]"
-      }`}
-    >
-      <Link href={`/home/notes/${note.id}`} className="min-w-0 flex-1">
-        <h3 className="font-medium text-wine">{note.title}</h3>
-        <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted">
-          {excerptFromMarkdown(note.content)}
-        </p>
-        <p className="mt-4 text-xs text-muted">
-          {new Date(note.updated_at || note.created_at).toLocaleString()}
-        </p>
-      </Link>
-      <div className="mt-4">
-        <PendingButton
-          idle="Delete"
-          busy="Deleting"
-          className="text-sm text-muted transition hover:text-wine disabled:cursor-wait disabled:opacity-70"
-        />
-      </div>
-    </motion.article>
   );
 }
 
@@ -148,7 +114,7 @@ export function ViewToggle({
           type="button"
           onClick={() => onChange(item.id)}
           aria-pressed={view === item.id}
-          className={`relative rounded-full px-3 py-1.5 transition ${
+          className={`relative rounded-full px-3 py-1.5 ${
             view === item.id ? "text-ivory" : "text-muted hover:text-wine"
           }`}
         >
@@ -156,7 +122,7 @@ export function ViewToggle({
             <motion.span
               layoutId="notes-view-pill"
               className="absolute inset-0 rounded-full bg-wine"
-              transition={{ type: "spring", stiffness: 380, damping: 34 }}
+              transition={springSoft}
             />
           ) : null}
           <span className="relative z-10">{item.label}</span>

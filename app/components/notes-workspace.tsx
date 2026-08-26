@@ -1,8 +1,9 @@
+import FadeIn from "@/app/components/fade-in";
 import MarkdownUpload from "@/app/components/markdown-upload";
 import NotesBoard from "@/app/components/notes-board";
-import { type Note, type TopicSlug } from "@/lib/notes";
+import { listNotesByTopic } from "@/lib/data/notes";
+import { type TopicSlug } from "@/lib/notes";
 import { readSupabaseEnv } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
 import type { NotesView } from "@/app/components/notes-collection";
 
 export default async function NotesWorkspace({
@@ -28,27 +29,20 @@ export default async function NotesWorkspace({
     );
   }
 
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("notes")
-    .select("id, title, content, category, created_at, updated_at")
-    .eq("category", topic)
-    .order("created_at", { ascending: false });
-
-  const notes = (data ?? []) as Note[];
+  const { notes, error } = await listNotesByTopic(topic);
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-6 py-8 sm:px-10">
+    <FadeIn as="main" className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-6 py-8 sm:px-10">
       <NotesBoard
         topic={topic}
         initialView={view}
         notes={notes}
         saveError={saveError}
         startAdd={startAdd}
-        queryError={error?.message}
+        queryError={error}
       >
         <MarkdownUpload defaultTopic={topic} />
       </NotesBoard>
-    </main>
+    </FadeIn>
   );
 }

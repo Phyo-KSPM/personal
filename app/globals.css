@@ -27,6 +27,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -37,39 +41,10 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
 }
 
-@keyframes login-rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.login-rise {
-  animation: login-rise 0.7s ease-out both;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .login-rise {
-    animation: none;
-  }
-
   .animate-spin {
     animation: none;
   }
-}
-
-a,
-button,
-input,
-textarea,
-select {
-  transition-property: color, background-color, border-color, box-shadow, opacity;
-  transition-duration: 180ms;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .note-markdown {

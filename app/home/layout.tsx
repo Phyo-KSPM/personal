@@ -1,17 +1,18 @@
+import { Suspense } from "react";
 import IdleLock from "@/app/components/idle-lock";
+import ScrollToTop from "@/app/components/scroll-to-top";
 import WorkspaceHeader from "@/app/components/workspace-header";
 import WorkspaceSidebar from "@/app/components/workspace-sidebar";
-import { parseTopic, type NoteSummary } from "@/lib/notes";
+import { getAuthUser, listNoteSummaries } from "@/lib/data/notes";
 import { readSupabaseEnv } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ko Phyo",
-  description: "Personal workspace",
+  title: "Workspace",
+  robots: { index: false, follow: false },
 };
 
-export default async function HomeLayout({ children }: LayoutProps<"/home">) {
+export default function HomeLayout({ children }: LayoutProps<"/home">) {
   if (!readSupabaseEnv()) {
     return (
       <>
@@ -21,30 +22,29 @@ export default async function HomeLayout({ children }: LayoutProps<"/home">) {
     );
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data } = await supabase
-    .from("notes")
-    .select("id, title, category, updated_at")
-    .order("updated_at", { ascending: false });
-
-  const notes: NoteSummary[] = (data ?? []).map((note) => ({
-    id: note.id,
-    title: note.title ?? "Untitled",
-    category: parseTopic(note.category),
-    updated_at: note.updated_at,
-  }));
-
   return (
     <div className="flex min-h-full flex-1 flex-col bg-ivory lg:flex-row">
       <IdleLock />
-      <WorkspaceSidebar notes={notes} />
+      <Suspense fallback={<WorkspaceSidebar notes={[]} />}>
+        <SidebarFromDb />
+      </Suspense>
       <div className="flex min-h-full min-w-0 flex-1 flex-col">
-        <WorkspaceHeader email={user?.email} />
+        <Suspense fallback={<WorkspaceHeader />}>
+          <HeaderFromDb />
+        </Suspense>
         {children}
+        <ScrollToTop />
       </div>
     </div>
   );
+}
+
+async function SidebarFromDb() {
+  const { notes } = await listNoteSummaries();
+  return <WorkspaceSidebar notes={notes} />;
+}
+
+async function HeaderFromDb() {
+  const user = await getAuthUser();
+  return <WorkspaceHeader email={user?.email} />;
 }
